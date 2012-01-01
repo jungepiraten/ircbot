@@ -7,6 +7,8 @@ import email.header
 from nntplib import NNTP
 
 def decode_header(header):
+	if header == None:
+		return ""
 	parts = email.header.decode_header(" ".join([line.strip() for line in header.split("\n")]))
 	if len(parts) == 1 and parts[0][1] == None:
 		return parts[0][0]
@@ -24,6 +26,7 @@ class NNTPMonitor(object):
 
 	def monitorloop(self):
 		watermark = dict()
+		watermark["pirates.youth.de.test"] = 2215
 		while True:
 			conn = self.connection()
 			for group, callback in self.groups:
@@ -31,9 +34,15 @@ class NNTPMonitor(object):
 				last = int(last)
 				if name in watermark:
 					for num in range(watermark[name] + 1, last + 1):
-						resp, num, msgid, lines = conn.head(num)
+						resp = conn.head(num)
+						# Python 3.1
+						if len(resp) == 4:
+							articlelines = resp[3]
+						# Python 3.2
+						elif len(resp) == 2:
+							articlelines = resp[1].lines
 						lines = []
-						for l in lines:
+						for l in articlelines:
 							lines.append(l.decode("utf-8"))
 						message = email.message_from_string("\r\n".join(lines))
 						callback(decode_header(message['From']), decode_header(message['Subject']))

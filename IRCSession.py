@@ -39,7 +39,10 @@ class IRCSession(object):
 			self.responseLocks[code] = Lock()
 			self.responseLocks[code].acquire()
 		self.responseLocks[code].acquire()
-		self.responseLocks[code].release()
+		try:
+			self.responseLocks[code].release()
+		except:
+			pass
 		if callback != None:
 			callback()
 	
