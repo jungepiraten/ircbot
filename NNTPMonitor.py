@@ -26,7 +26,7 @@ class NNTPMonitor(object):
 
 	def monitorloop(self):
 		watermark = dict()
-		watermark["pirates.youth.de.test"] = 2215
+		watermark[b'pirates.youth.de.test'] = 2215
 		while True:
 			conn = self.connection()
 			for group, callback in self.groups:
