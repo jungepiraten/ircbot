@@ -22,6 +22,6 @@ class TwitterMonitor(object):
 				else:
 					results = twitter.searchTwitter(q=query,result_type="recent")["results"]
 				for tweet in results:
-					self.callback(tweet["from_user"], "http://twitter.com/#!/" + tweet["from_user"] + "/status/" + tweet["id_str"], tweet["text"])
+					self.callback(tweet["from_user"].encode("utf-8"), "http://twitter.com/#!/" + tweet["from_user"].encode("utf-8") + "/status/" + tweet["id_str"].encode("utf-8"), tweet["text"].encode("utf-8"))
 					watermark[query] = tweet["id_str"]
 			time.sleep(60)
