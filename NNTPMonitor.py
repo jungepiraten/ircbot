@@ -16,7 +16,6 @@ class NNTPMonitor(object):
 	def __init__(self, nntphost, groups):
 		self.nntphost = nntphost
 		self.groups = groups
-		self.watermark = dict()
 		
 		Thread(target=self.monitorloop).start()
 	
@@ -24,17 +23,18 @@ class NNTPMonitor(object):
 		return NNTP(self.nntphost)
 
 	def monitorloop(self):
+		watermark = dict()
 		while True:
 			conn = self.connection()
 			for group, callback in self.groups:
 				resp, count, first, last, name = conn.group(group)
-				if name in self.watermark:
-					for num in range(self.watermark[name] + 1, last + 1):
+				if name in watermark:
+					for num in range(watermark[name] + 1, last + 1):
 						resp, article = conn.head(num)
 						lines = []
 						for l in article.lines:
 							lines.append(l.decode("utf-8"))
 						message = email.message_from_string("\r\n".join(lines))
 						callback(decode_header(message['From']), decode_header(message['Subject']))
-				self.watermark[name] = last
+				watermark[name] = last
 			time.sleep(10)

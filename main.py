@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from IRCSession import IRCSession
-from IRCTwitterMonitor import IRCTwitterMonitor
+from TwitterMonitor import TwitterMonitor
 from NNTPMonitor import NNTPMonitor
 
 irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
