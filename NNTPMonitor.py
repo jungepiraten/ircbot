@@ -3,7 +3,7 @@
 
 from threading import Thread
 import time
-import email
+import email.header
 from nntplib import NNTP
 
 def decode_header(header):
@@ -31,7 +31,7 @@ class NNTPMonitor(object):
 				last = int(last)
 				if name in watermark:
 					for num in range(watermark[name] + 1, last + 1):
-						resp, num, msgid, lines = conn.head(str(num))
+						resp, num, msgid, lines = conn.head(num)
 						lines = []
 						for l in lines:
 							lines.append(l.decode("utf-8"))
