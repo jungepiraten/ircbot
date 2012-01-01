@@ -5,7 +5,7 @@ from threading import Thread
 from twython import Twython
 import time
 
-class IRCTwitterMonitor(object):
+class TwitterMonitor(object):
 	def __init__(self, query, callback):
 		self.query = query
 		self.callback = callback
