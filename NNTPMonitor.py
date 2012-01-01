@@ -31,7 +31,7 @@ class NNTPMonitor(object):
 				last = int(last)
 				if name in watermark:
 					for num in range(watermark[name] + 1, last + 1):
-						resp, article = conn.head(num)
+						resp, article = conn.head(str(num))
 						lines = []
 						for l in article.lines:
 							lines.append(l.decode("utf-8"))
