@@ -13,11 +13,9 @@ class IRCSession(object):
 		self.s.connect((server,port))
 		self.rbuf = self.s.makefile("rb")
 		
-		self.omegle = {}
-		self.player = {}
 		self.nickname = nickname
-
 		self.privmsgHooks = dict()
+		self.responseLocks = dict()
 		
 		if password:
 			self.send("PASS {0}".format(password))
@@ -25,7 +23,7 @@ class IRCSession(object):
 		self.send("USER {0} 127.0.0.1 {1} :{2}".format(username, server, realname))
 		Thread(target=self.readloop).start()
 		# Wait until MOTD etc gets done
-		time.sleep(3)
+		self.waitForResponse("005")
 
 	# our debug-hook - in most cases do nothing
 	def debug(self, msg):
@@ -35,6 +33,15 @@ class IRCSession(object):
 	def send(self, data):
 		self.debug(' > ' + data)
 		self.s.send(data.encode('utf-8') + b'\n')
+	
+	def waitForResponse(self, code, callback = None):
+		if code not in self.responseLocks:
+			self.responseLocks[code] = Lock()
+			self.responseLocks[code].acquire()
+		self.responseLocks[code].acquire()
+		self.responseLocks[code].release()
+		if callback != None:
+			callback()
 	
 	def readloop(self):
 		while True:
@@ -70,6 +77,13 @@ class IRCSession(object):
 		if line.startswith('433'):
 			self.nickname = self.nickname + "_"
 			self.send('NICK ' + self.nickname)
+
+		# any numeric response we are waiting for
+		if line[:3] in self.responseLocks:
+			try:
+				self.responseLocks[line[:3]].release()
+			except:
+				pass
 
 		# handle commands via PRIVMSG
 		elif line.upper().startswith('PRIVMSG'):

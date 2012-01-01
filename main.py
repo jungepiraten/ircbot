@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from IRCSession import IRCSession
-from TwitterMonitor import TwitterMonitor
+#from TwitterMonitor import TwitterMonitor
 from NNTPMonitor import NNTPMonitor
 
 irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
@@ -14,7 +14,7 @@ def generateNNTPCallback(prefix):
 def twitterCallback(sender, url, tweet):
 	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " (" + url + ")")
 
-TwitterMonitor([ "#jupis", "JungePiraten" ], twitterCallback)
+#TwitterMonitor([ "#jupis", "JungePiraten" ], twitterCallback)
 NNTPMonitor("news.junge-piraten.de",
 	[
 	[ "pirates.youth.de.test", generateNNTPCallback("[Test] ") ]
