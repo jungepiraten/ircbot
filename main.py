@@ -5,6 +5,7 @@ from IRCSession import IRCSession
 from TwitterMonitor import TwitterMonitor
 from NNTPMonitor import NNTPMonitor
 from base64 import b64encode
+import time
 
 def generateNNTPCallback(prefix, forumid):
 	return lambda messageid,sender,subject: irc.post(channel, prefix + subject + " (" + sender + ") - "
@@ -15,8 +16,9 @@ def twitterCallback(sender, url, tweet):
 
 irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
 channel = "#jupis"
+irc.post("NickServ", "identify JuPiBot ****")
+time.sleep(1)
 irc.join(channel)
-irc.post("NickServ", "identify JuPiBot BEgkVPMQT9y9dehe")
 
 TwitterMonitor([ channel, "JungePiraten" ], twitterCallback)
 
