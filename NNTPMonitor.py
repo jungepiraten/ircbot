@@ -28,6 +28,7 @@ class NNTPMonitor(object):
 			conn = self.connection()
 			for group, callback in self.groups:
 				resp, count, first, last, name = conn.group(group)
+				last = int(last)
 				if name in watermark:
 					for num in range(watermark[name] + 1, last + 1):
 						resp, article = conn.head(num)
