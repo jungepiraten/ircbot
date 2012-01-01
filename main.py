@@ -8,7 +8,7 @@ from base64 import b64encode
 
 def generateNNTPCallback(prefix, forumid):
 	return lambda messageid,sender,subject: irc.post(channel, prefix + subject + " (" + sender + ") - "
-					+ "http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid.encode("utf-8")))
+					+ "http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid.encode("utf-8")).decode("utf-8"))
 
 def twitterCallback(sender, url, tweet):
 	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
