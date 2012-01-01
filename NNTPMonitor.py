@@ -31,9 +31,9 @@ class NNTPMonitor(object):
 				last = int(last)
 				if name in watermark:
 					for num in range(watermark[name] + 1, last + 1):
-						resp, article = conn.head(str(num))
+						resp, num, msgid, lines = conn.head(str(num))
 						lines = []
-						for l in article.lines:
+						for l in lines:
 							lines.append(l.decode("utf-8"))
 						message = email.message_from_string("\r\n".join(lines))
 						callback(decode_header(message['From']), decode_header(message['Subject']))
