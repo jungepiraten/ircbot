@@ -6,10 +6,13 @@ from TwitterMonitor import TwitterMonitor
 from NNTPMonitor import NNTPMonitor
 from base64 import b64encode
 import time
+from threading import Timer
 
 def generateNNTPCallback(prefix, forumid):
-	return lambda messageid,sender,subject: irc.post(channel, prefix + subject + " (" + sender + ") - "
-					+ "http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid.encode("utf-8")).decode("utf-8"))
+	return lambda messageid,sender,subject:	Timer(3*60, lambda:
+			irc.post(channel, prefix + subject + " (" + sender + ") - " +
+					  "http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid.encode("utf-8")).decode("utf-8"))
+			)
 
 def twitterCallback(sender, url, tweet):
 	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
