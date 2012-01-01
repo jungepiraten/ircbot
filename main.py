@@ -4,24 +4,25 @@
 from IRCSession import IRCSession
 from TwitterMonitor import TwitterMonitor
 from NNTPMonitor import NNTPMonitor
+from base64 import b64encode
 
-def generateNNTPCallback(prefix):
-	return lambda sender,subject: irc.post(channel, prefix + subject + " (" + sender + ")")
+def generateNNTPCallback(prefix, forumid):
+	return lambda messageid,sender,subject: irc.post(channel, prefix + subject + " (" + sender + ") - http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid))
 
 def twitterCallback(sender, url, tweet):
-	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " (" + url + ")")
+	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
 
 irc = IRCSession('schumann.de.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
-channel = "#test"
+channel = "#jupis"
 irc.join(channel)
 
-TwitterMonitor([ "#jupis", "JungePiraten" ], twitterCallback)
+TwitterMonitor([ channel, "JungePiraten" ], twitterCallback)
 
 groups = []
 groupfile = open("/root/nntpmls/lists.index", "r")
 for line in groupfile:
 	if not line.startswith("#"):
-		ml, group, wiki, id, desc = line.strip().split(None, 4)
-		groups.append([ group, generateNNTPCallback("[" + ml.upper() + "] ") ])
+		ml, group, wiki, forumid, desc = line.strip().split(None, 4)
+		groups.append([ group, generateNNTPCallback("[" + ml.upper() + "] ", forumid) ])
 #groups.append( [ "pirates.youth.de.test", "[TEST] " ] )
 NNTPMonitor("news.junge-piraten.de", groups)

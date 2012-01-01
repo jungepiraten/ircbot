@@ -46,6 +46,6 @@ class NNTPMonitor(object):
 						for l in articlelines:
 							lines.append(l.decode("utf-8"))
 						message = email.message_from_string("\r\n".join(lines))
-						callback(decode_header(message['From']), decode_header(message['Subject']))
+						callback(decode_header(message['Message-ID']), decode_header(message['From']), decode_header(message['Subject']))
 				watermark[name] = last
 			time.sleep(10)
