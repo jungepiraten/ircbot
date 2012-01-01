@@ -7,14 +7,16 @@ from NNTPMonitor import NNTPMonitor
 from base64 import b64encode
 
 def generateNNTPCallback(prefix, forumid):
-	return lambda messageid,sender,subject: irc.post(channel, prefix + subject + " (" + sender + ") - http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid))
+	return lambda messageid,sender,subject: irc.post(channel, prefix + subject + " (" + sender + ") - "
+					+ "http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid.encode("utf-8")))
 
 def twitterCallback(sender, url, tweet):
 	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
 
-irc = IRCSession('schumann.de.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
+irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
 channel = "#jupis"
 irc.join(channel)
+irc.post("NickServ", "identify JuPiBot BEgkVPMQT9y9dehe")
 
 TwitterMonitor([ channel, "JungePiraten" ], twitterCallback)
 
