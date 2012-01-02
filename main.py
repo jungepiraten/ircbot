@@ -17,7 +17,7 @@ def generateNNTPCallback(prefix, forumid):
 def twitterCallback(sender, url, tweet):
 	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
 
-irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
+irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
 channel = "#jupis"
 irc.post("NickServ", "identify " + open("botauth.txt", "r").readline().strip())
 time.sleep(1)
