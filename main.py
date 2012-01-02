@@ -12,14 +12,14 @@ def generateNNTPCallback(prefix, forumid):
 	return lambda messageid,sender,subject:	Timer(3*60, lambda:
 			irc.post(channel, prefix + subject + " (" + sender + ") - " +
 					  "http://forum.junge-piraten.de/viewthread.php?boardid=" + str(forumid) + "&messageid=" + b64encode(messageid.encode("utf-8")).decode("utf-8"))
-			)
+			).start()
 
 def twitterCallback(sender, url, tweet):
 	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
 
 irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', '-', None)
 channel = "#jupis"
-irc.post("NickServ", "identify JuPiBot ****")
+irc.post("NickServ", "identify " + open("botauth.txt", "r").readline().strip())
 time.sleep(1)
 irc.join(channel)
 
