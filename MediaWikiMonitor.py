@@ -31,6 +31,6 @@ class MediaWikiMonitor(object):
 			for change in changes:
 				if change["revid"] > curRevPosition:
 					self.callback(change)
-					curRevRevision = change["revid"]
+					curRevPosition = change["revid"]
 					curTimePosition = change["timestamp"]
 			time.sleep(60)
