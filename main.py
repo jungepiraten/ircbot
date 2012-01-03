@@ -28,7 +28,7 @@ irc.post("NickServ", "identify " + open("botauth.txt", "r").readline().strip())
 time.sleep(1)
 irc.join(channel)
 
-TwitterMonitor([ "#jupis", "JungePiraten" ], twitterCallback)
+TwitterMonitor("#jupis OR JungePiraten", twitterCallback)
 
 groups = []
 groupfile = open("/root/nntpmls/lists.index", "r")

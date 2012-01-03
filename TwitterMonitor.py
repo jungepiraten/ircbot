@@ -14,16 +14,13 @@ class TwitterMonitor(object):
 	
 	def monitorloop(self):
 		twitter = Twitter(domain="search.twitter.com")
-		watermark = dict()
+		results = twitter.search(q=self.query,result_type="recent",rpp="1")
+		watermark = results["max_id_str"]
 		while True:
-			for query in self.query:
-				if query in watermark:
-					results = twitter.search(q=query,result_type="recent",since_id=watermark[query])
-					for tweet in results["results"]:
-						self.callback(	tweet["from_user"],
-								"http://twitter.com/#!/" + tweet["from_user"] + "/status/" + tweet["id_str"],
-								tweet["text"] )
-				else:
-					results = twitter.search(q=query,result_type="recent",rpp="1")
-				watermark[query] = results["max_id_str"]
+			results = twitter.search(q=self.query,result_type="recent",since_id=watermark)
+			for tweet in results["results"]:
+				self.callback(	tweet["from_user"],
+						"http://twitter.com/#!/" + tweet["from_user"] + "/status/" + tweet["id_str"],
+						tweet["text"] )
+			watermark = results["max_id_str"]
 			time.sleep(60)
