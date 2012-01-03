@@ -20,7 +20,7 @@ class MediaWikiMonitor(object):
 	def recentChangesCall(self, params):
 		params['action'] = "query"
 		params['list'] = "recentchanges"
-		return self.apiCall(params)["recentchanges"]
+		return self.apiCall(params)["query"]["recentchanges"]
 	
 	def monitorloop(self):
 		lastchange = self.recentChangesCall({'rclimit':1,'rctype':'new|edit','rcprop':'timestamp|ids'}).pop()
