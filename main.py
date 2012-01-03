@@ -4,6 +4,7 @@
 from IRCSession import IRCSession
 from TwitterMonitor import TwitterMonitor
 from NNTPMonitor import NNTPMonitor
+from MediaWikiMonitor import MediaWikiMonitor
 from base64 import b64encode
 import time
 from threading import Timer
@@ -16,6 +17,10 @@ def generateNNTPCallback(prefix, forumid):
 
 def twitterCallback(sender, url, tweet):
 	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
+
+def mediawikiCallback(change):
+	irc.post(channel, "[Wiki] " + change["title"] + " (" + change["user"] + ") - " +
+				"http://wiki.junge-piraten.de/w/index.php?diff=" + change["revid"] + "&oldid=" + change["old_revid"])
 
 irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
 channel = "#jupis"
