@@ -13,7 +13,7 @@ from urllib.parse import urlencode
 def generateNNTPCallback(prefix, forumid):
 	return lambda messageid,sender,subject:	Timer(3*60, lambda:
 			irc.post(channel, prefix + subject + " (" + sender + ") - " +
-					  "http://forum.junge-piraten.de/viewthread.php?" + urlencode('boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
+					  "http://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
 			).start()
 
 def twitterCallback(sender, url, tweet):
