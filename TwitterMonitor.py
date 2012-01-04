@@ -3,7 +3,7 @@
 
 from twitter import Twitter
 from threading import Thread
-from urllib.parse import urlencode
+from urllib.parse import quote
 import time
 
 class TwitterMonitor(object):
@@ -21,7 +21,7 @@ class TwitterMonitor(object):
 			results = twitter.search(q=self.query,result_type="recent",since_id=watermark)
 			for tweet in results["results"]:
 				self.callback(	tweet["from_user"],
-						"http://twitter.com/#!/" + urlencode(tweet["from_user"]) + "/status/" + tweet["id_str"],
+						"http://twitter.com/#!/" + quote(tweet["from_user"]) + "/status/" + tweet["id_str"],
 						tweet["text"] )
 			watermark = results["max_id_str"]
 			time.sleep(60)
