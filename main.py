@@ -16,8 +16,11 @@ def generateNNTPCallback(prefix, forumid):
 					  "http://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
 			).start()
 
+twitterIgnoreList = [line.strip() for line in open("twitterignore.txt", "r").readlines()]
+
 def twitterCallback(sender, url, tweet):
-	irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
+	if sender not in twitterIgnoreList:
+		irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
 
 def mediawikiCallback(change):
 	irc.post(channel, "[Wiki] " + change["title"] + " (" + change["user"] + ") - " +
