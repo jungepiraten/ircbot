@@ -13,7 +13,7 @@ from urllib.parse import urlencode
 def generateNNTPCallback(prefix, forumid):
 	return lambda messageid,sender,subject:	Timer(3*60, lambda:
 			irc.post(channel, prefix + subject + " (" + sender + ") - " +
-					  "http://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
+					  "https://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
 			).start()
 
 def twitterCallback(sender, url, tweet):
@@ -22,7 +22,7 @@ def twitterCallback(sender, url, tweet):
 
 def mediawikiCallback(change):
 	irc.post(channel, "[Wiki] " + change["title"] + " (" + change["user"] + ") - " +
-				"http://wiki.junge-piraten.de/w/index.php?" + urlencode({ 'diff' : change["revid"], 'oldid' : change["old_revid"] }))
+				"https://wiki.junge-piraten.de/w/index.php?" + urlencode({ 'diff' : change["revid"], 'oldid' : change["old_revid"] }))
 
 irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
 channel = "#jupis"

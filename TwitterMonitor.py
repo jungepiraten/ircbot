@@ -21,7 +21,7 @@ class TwitterMonitor(object):
 			results = twitter.search(q=self.query,result_type="recent",since_id=watermark)
 			for tweet in results["results"]:
 				self.callback(	tweet["from_user"],
-						"http://twitter.com/#!/" + quote(tweet["from_user"]) + "/status/" + tweet["id_str"],
+						"https://twitter.com/#!/" + quote(tweet["from_user"]) + "/status/" + tweet["id_str"],
 						tweet["text"] )
 			watermark = results["max_id_str"]
 			time.sleep(60)
