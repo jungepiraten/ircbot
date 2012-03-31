@@ -42,4 +42,4 @@ for line in groupfile:
 #groups.append( [ "pirates.youth.de.test", "[TEST] " ] )
 NNTPMonitor("news.junge-piraten.de", groups)
 
-MediaWikiMonitor("http://wiki.junge-piraten.de/w/api.php", mediawikiCallback)
+MediaWikiMonitor("https://wiki.junge-piraten.de/w/api.php", mediawikiCallback)
