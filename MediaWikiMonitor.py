@@ -23,11 +23,11 @@ class MediaWikiMonitor(object):
 		return self.apiCall(params)["query"]["recentchanges"]
 	
 	def monitorloop(self):
-		lastchange = self.recentChangesCall({'rclimit':1,'rctype':'new|edit','rcprop':'timestamp|ids'}).pop()
+		lastchange = self.recentChangesCall({'rclimit':1,'rctype':'new|edit|log','rcshow':'!minor','rcprop':'timestamp|ids'}).pop()
 		curTimePosition = lastchange["timestamp"]
 		curRevPosition = lastchange["revid"]
 		while True:
-			changes = self.recentChangesCall({'rcdir':'newer','rcstart':curTimePosition,'rctype':'new|edit','rcprop':'user|timestamp|title|ids'})
+			changes = self.recentChangesCall({'rcdir':'newer','rcstart':curTimePosition,'rctype':'new|edit|log','rcshow':'!minor','rcprop':'user|timestamp|title|ids|comment'})
 			for change in changes:
 				if change["revid"] > curRevPosition:
 					self.callback(change)

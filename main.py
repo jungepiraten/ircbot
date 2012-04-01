@@ -18,11 +18,11 @@ def generateNNTPCallback(prefix, forumid):
 			).start()
 
 def twitterCallback(sender, url, tweet):
-	if sender not in [line.strip() for line in open("twitterignore.txt", "r").readlines()]:
+	if not tweet.startswith("RT") and sender not in [line.strip() for line in open("twitterignore.txt", "r").readlines()]:
 		irc.post(channel, "[Twitter] " + sender + ": " + tweet + " - " + url)
 
 def mediawikiCallback(change):
-	irc.post(channel, "[Wiki] " + change["title"] + " (" + change["user"] + ") - " +
+	irc.post(channel, "[Wiki] " + change["title"] + " (" + change["user"] + ": " + change["comment"] + ") - " +
 				"https://wiki.junge-piraten.de/w/index.php?" + urlencode({ 'diff' : change["revid"], 'oldid' : change["old_revid"] }))
 
 irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
