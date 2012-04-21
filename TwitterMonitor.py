@@ -18,10 +18,13 @@ class TwitterMonitor(object):
 		results = twitter.search(q=self.query,result_type="recent",rpp="1")
 		watermark = results["max_id_str"]
 		while True:
-			results = twitter.search(q=self.query,result_type="recent",since_id=watermark)
+			results = twitter.search(q=self.query,result_type="recent",since_id=watermark,include_entities=1)
 			for tweet in results["results"]:
+				text = tweet["text"]
+				for url in tweet["entities"]["urls"]:
+					text = text.replace(url["url"], url["expanded_url"])
 				self.callback(	tweet["from_user"],
 						"https://twitter.com/#!/" + quote(tweet["from_user"]) + "/status/" + tweet["id_str"],
-						tweet["text"] )
+						text )
 			watermark = results["max_id_str"]
 			time.sleep(60)
