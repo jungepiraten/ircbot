@@ -6,6 +6,7 @@ from TwitterMonitor import TwitterMonitor
 from NNTPMonitor import NNTPMonitor
 from MediaWikiMonitor import MediaWikiMonitor
 from RssMonitor import RssMonitor
+from OTRSMonitor import OTRSMonitor
 from base64 import b64encode
 import time
 from threading import Timer
@@ -18,7 +19,7 @@ time.sleep(1)
 for channel in channels:
 	irc.join(channel)
 
-irc.join("#jupis-vorstand")
+irc.join("#jupis-vorstand", open("vorstandircpasswd.txt", "r").readline().strip())
 
 def twitterCallback(sender, url, tweet):
 	if not tweet.startswith("RT") and sender not in [line.strip() for line in open("twitterignore.txt", "r").readlines()]:
@@ -34,11 +35,11 @@ TwitterMonitor("#jupis OR JungePiraten", twitterCallback)
 def nntpCallback(prefix, forumid, messageid, sender, subject):
 	for channel in channels:
 		irc.post(channel, prefix + subject + " (" + sender + ") - " +
-# 				  "https://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
-				  "https://f.jpli.de/" + quote(forumid) + "/" + quote(b64encode(messageid.encode("utf-8")).decode("utf-8")) )
+# 			  "https://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
+			  "https://f.jpli.de/" + quote(forumid) + "/" + quote(b64encode(messageid.encode("utf-8")).decode("utf-8")) )
 
 def generateNNTPCallback(prefix, forumid):
-	return lambda messageid,sender,subject:	lambda: Timer(3*60, nntpCallback(prefix, forumid, messageid, sender, subject) ).start()
+	return lambda messageid,sender,subject: Timer(3*60, nntpCallback, [prefix, forumid, messageid, sender, subject] ).start()
 
 groups = []
 groupfile = open("/root/nntpmls/lists.index", "r")

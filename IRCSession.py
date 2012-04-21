@@ -55,8 +55,8 @@ class IRCSession(object):
 			except UnicodeDecodeError:
 				pass
 	
-	def join(self, chan):
-		self.send('JOIN {0}'.format(chan))
+	def join(self, chan, password = ''):
+		self.send('JOIN {0} {1}'.format(chan, password))
 
 	def leave(self, chan, reason):
 		self.send('PART {0} :{1}'.format(chan, reason))

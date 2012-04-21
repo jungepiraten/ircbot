@@ -32,9 +32,12 @@ class OTRSMonitor(object):
 		curArticleID = 0
 		while True:
 			tickets = self.ticketListCall()
+			maxArticleID = curArticleID
 			for ticket in tickets:
 				if int(ticket["ArticleID"]) > curArticleID:
 					if curArticleID != 0:
 						self.callback(ticket["TicketNumber"], ticket["Subject"], self.otrsurl + "index.pl?Action=AgentTicketZoom;TicketID=" + str(ticket["TicketID"]) + "#" + str(ticket["ArticleID"]))
-					curArticleID = int(ticket["ArticleID"])
+				if int(ticket["ArticleID"]) > maxArticleID:
+					maxArticleID = int(ticket["ArticleID"])
+			curArticleID = maxArticleID
 			time.sleep(60)
