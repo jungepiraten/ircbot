@@ -46,10 +46,10 @@ class NNTPMonitor(object):
 						for l in articlelines:
 							lines.append(l.decode("utf-8"))
 						message = email.message_from_string("\r\n".join(lines))
-						if message['X-Acknowledge'] is None:
-							linkto = message['Message-ID']
-						else:
+						if "X-Acknowledge" in message:
 							linkto = message['References']
+						else:
+							linkto = message['Message-ID']
 						callback(decode_header(linkto), decode_header(message['From']), decode_header(message['Subject']))
 				watermark[name] = last
 			time.sleep(10)
