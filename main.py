@@ -11,9 +11,10 @@ from base64 import b64encode
 import time
 from threading import Timer
 from urllib.parse import urlencode, quote
+import httplib
 
-irc = IRCSession('de.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
-channels = ["#jupis","#jupis-status"]
+irc = IRCSession('de.libertirc.net', 6667, 'JuPiBotTEST', 'jupibotTEST', 'Admin: kruemel', None)
+channels = ["#jupisT"]
 irc.post("NickServ", "identify " + open("botauth.txt", "r").readline().strip())
 time.sleep(1)
 for channel in channels:
@@ -33,10 +34,15 @@ TwitterMonitor("#jupis OR JungePiraten", twitterCallback)
 #
 
 def nntpCallback(prefix, forumid, messageid, sender, subject):
+	conn = httplib.HTTPConnection("n.jpli.de")
+	conn.request("GET","/add.php?board="+quote(forumid)+"&message="+quote(b64encode(messageid.encode("utf-8")).decode("utf-8")))
+	res = conn.getresponse()
+	link = res.read()
 	for channel in channels:
-		irc.post(channel, prefix + subject + " (" + sender + ") - " +
+		irc.post(channel, prefix + subject + " (" + sender + ") - " + link )
 # 			  "https://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
-			  "https://f.jpli.de/" + quote(forumid) + "/" + quote(b64encode(messageid.encode("utf-8")).decode("utf-8")) )
+#			  "https://f.jpli.de/" + quote(forumid) + "/" + quote(b64encode(messageid.encode("utf-8")).decode("utf-8")) )
+
 
 def generateNNTPCallback(prefix, forumid):
 	return lambda messageid,sender,subject: Timer(3*60, nntpCallback, [prefix, forumid, messageid, sender, subject] ).start()
