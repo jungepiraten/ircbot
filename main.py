@@ -13,8 +13,8 @@ from threading import Timer
 from urllib.parse import urlencode, quote
 import httplib
 
-irc = IRCSession('de.libertirc.net', 6667, 'JuPiBotTEST', 'jupibotTEST', 'Admin: kruemel', None)
-channels = ["#jupisT"]
+irc = IRCSession('de.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
+channels = ["#jupis","#jupis-status"]
 irc.post("NickServ", "identify " + open("botauth.txt", "r").readline().strip())
 time.sleep(1)
 for channel in channels:
