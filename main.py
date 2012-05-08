@@ -11,7 +11,7 @@ from base64 import b64encode
 import time
 from threading import Timer
 from urllib.parse import urlencode, quote
-import httplib
+import urllib.request
 
 irc = IRCSession('de.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
 channels = ["#jupis","#jupis-status"]
@@ -34,10 +34,7 @@ TwitterMonitor("#jupis OR JungePiraten", twitterCallback)
 #
 
 def nntpCallback(prefix, forumid, messageid, sender, subject):
-	conn = httplib.HTTPConnection("n.jpli.de")
-	conn.request("GET","/add.php?board="+quote(forumid)+"&message="+quote(b64encode(messageid.encode("utf-8")).decode("utf-8")))
-	res = conn.getresponse()
-	link = res.read()
+	link = urllib.request.urlopen("https://n.jpli.de/add.php?board="+quote(forumid)+"&message="+quote(b64encode(messageid.encode("utf-8")).decode("utf-8"))).read().decode("utf-8")
 	for channel in channels:
 		irc.post(channel, prefix + subject + " (" + sender + ") - " + link )
 # 			  "https://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
