@@ -10,6 +10,7 @@ from OTRSMonitor import OTRSMonitor
 from base64 import b64encode
 import time
 from threading import Timer
+import re
 from urllib.parse import urlencode, quote
 import urllib.request
 
@@ -34,12 +35,12 @@ TwitterMonitor("#jupis OR JungePiraten", twitterCallback)
 #
 
 def nntpCallback(prefix, forumid, messageid, sender, subject):
-	link = urllib.request.urlopen("https://n.jpli.de/add.php?board="+quote(forumid)+"&message="+quote(b64encode(messageid.encode("utf-8")).decode("utf-8"))).read().decode("utf-8")
+	if re.compile("\\[[+-][0-9]+\\]").search(subject):
+		link = "-"
+	else:
+		link = urllib.request.urlopen("https://n.jpli.de/add.php?board="+quote(forumid)+"&message="+quote(b64encode(messageid.encode("utf-8")).decode("utf-8"))).read().decode("utf-8")
 	for channel in channels:
 		irc.post(channel, prefix + subject + " (" + sender + ") - " + link )
-# 			  "https://forum.junge-piraten.de/viewthread.php?" + urlencode({ 'boardid' : forumid, 'messageid' : b64encode(messageid.encode("utf-8")).decode("utf-8") }))
-#			  "https://f.jpli.de/" + quote(forumid) + "/" + quote(b64encode(messageid.encode("utf-8")).decode("utf-8")) )
-
 
 def generateNNTPCallback(prefix, forumid):
 	return lambda messageid,sender,subject: Timer(3*60, nntpCallback, [prefix, forumid, messageid, sender, subject] ).start()
