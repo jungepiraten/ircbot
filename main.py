@@ -14,7 +14,7 @@ import re
 from urllib.parse import urlencode, quote
 import urllib.request
 
-irc = IRCSession('irc.libertirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
+irc = IRCSession('irc.pirateirc.net', 6667, 'JuPiBot', 'jupibot', 'Admin: prauscher / lutoma', None)
 channels = ["#jupis","#jupis-status"]
 irc.post("NickServ", "identify " + open("botauth.txt", "r").readline().strip())
 time.sleep(1)
@@ -22,6 +22,7 @@ for channel in channels:
 	irc.join(channel)
 
 irc.join("#jupis-vorstand", open("vorstandircpasswd.txt", "r").readline().strip())
+irc.join("#jupis-verwaltung")
 
 def twitterCallback(sender, url, tweet):
 	if not tweet.startswith("RT") and sender not in [line.strip() for line in open("twitterignore.txt", "r").readlines()]:
@@ -59,9 +60,10 @@ NNTPMonitor("news.junge-piraten.de", groups)
 #
 
 def mediawikiCallback(change):
-	for channel in channels:
-		irc.post(channel, "[Wiki] " + change["title"] + " (" + change["user"] + ": " + change["comment"] + ") - " +
-					"https://wiki.junge-piraten.de/w/index.php?" + urlencode({ 'diff' : change["revid"], 'oldid' : change["old_revid"] }))
+	if not change["user"] in ["VorstandsBot"]:
+		for channel in channels:
+			irc.post(channel, "[Wiki] " + change["title"] + " (" + change["user"] + ": " + change["comment"] + ") - " +
+						"https://wiki.junge-piraten.de/w/index.php?" + urlencode({ 'diff' : change["revid"], 'oldid' : change["old_revid"] }))
 
 MediaWikiMonitor("https://wiki.junge-piraten.de/w/api.php", mediawikiCallback)
 
@@ -85,7 +87,11 @@ RssMonitor("http://www.junge-piraten.de/comments/feed/", homepageCommentCallback
 # OTRS (Vorstandsqueue)
 #
 
-def otrsVorstandCallback(ticketNumber, subject, link):
-	irc.post("#jupis-vorstand", "[" + str(ticketNumber) + "] " + subject + " - " + link)
+def generateOtrsVorstandCallback(channel, prefix):
+	return lambda ticketNumber, subject, link: irc.post(channel, prefix + " [" + str(ticketNumber) + "] " + subject + " - " + link)
 
-OTRSMonitor("https://helpdesk.junge-piraten.de/otrs/", "JuPiBot", open("otrspasswd.txt", "r").readline().strip(), 38, otrsVorstandCallback)
+OTRSMonitor("https://helpdesk.junge-piraten.de/otrs/", "JuPiBot", open("otrspasswd.txt", "r").readline().strip(), 38, generateOtrsVorstandCallback("#jupis-vorstand", ""))
+OTRSMonitor("https://helpdesk.junge-piraten.de/otrs/", "JuPiBot", open("otrspasswd.txt", "r").readline().strip(), 29, generateOtrsVorstandCallback("#jupis-verwaltung", "POSTSTELLE"))
+OTRSMonitor("https://helpdesk.junge-piraten.de/otrs/", "JuPiBot", open("otrspasswd.txt", "r").readline().strip(), 30, generateOtrsVorstandCallback("#jupis-verwaltung", "DOKUMENTE"))
+OTRSMonitor("https://helpdesk.junge-piraten.de/otrs/", "JuPiBot", open("otrspasswd.txt", "r").readline().strip(), 27, generateOtrsVorstandCallback("#jupis-verwaltung", "MV"))
+OTRSMonitor("https://helpdesk.junge-piraten.de/otrs/", "JuPiBot", open("otrspasswd.txt", "r").readline().strip(), 14, generateOtrsVorstandCallback("#jupis-verwaltung", "KONTAKT"))
